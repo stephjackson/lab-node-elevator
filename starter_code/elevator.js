@@ -7,17 +7,16 @@ class Elevator {
     this.passengers = [];
     this.direction  = '';
     this.intervalId;
+    this.storedArray = [];
   }
 
   start() { 
-    var that = this;
-    this.intervalId = setInterval(function(){ that.update(); }, 1000);
+    this.intervalId = setInterval(() => { this.update(); }, 1000);
   }
   stop() { 
     clearInterval(this.intervalId);
   }
   update() {
-    this.log();
     if (this.requests.length === 0) {
       if (this.waitingList.length === 0) {
         console.log("No one is waiting!");
@@ -26,7 +25,7 @@ class Elevator {
           this.floorDown();
           }
         } else {
-          this.requests.push(waitingList[0].originFloor);
+          this.requests.push(this.waitingList[0].originFloor);
       }
     } else {
       if (this.requests[0] < this.floor) {
@@ -39,32 +38,37 @@ class Elevator {
         console.log("There's an issue in update!");
       }
     }
+    this.log();
   }
-  _passengersEnter() { 
-    var that = this;
-    this.waitingList.forEach(function(person, i){
-      if (person.originFloor === that.floor) {
-        that.passengers.push(person);
-        that.waitingList.splice(i, 1);
-        that.requests.push(person.destinationFloor);
+  _passengersEnter() {
+    this.waitingList.forEach((person, i) => {
+      if (person.originFloor === this.floor) {
+        this.passengers.push(person);
+        this.requests.push(person.destinationFloor);
         console.log(person.name + " has entered the elevator");
       }
     });
+    this.waitingList = this.waitingList.filter((person) => {
+      return person.originFloor !== this.floor;
+    });
   }
   _passengersLeave() {
-    var that = this;
-    this.passengers.forEach(function(person, i) {
-      if (person.destinationFloor === that.floor) {
-        that.passengers.splice(i, 1);
+    this.passengers.forEach((person, i) => {
+      if (person.destinationFloor === this.floor) {
+        this.storedArray.push(i);
         console.log(person.name + " has left the elevator");
       }
-      that.requests.forEach(function(request, i) {
-        if (request === that.floor) {
-          that.requests.splice(i, 1);
+      this.requests.forEach((request, i) => {
+        if (request === this.floor) {
+          this.requests.splice(i, 1);
         }
       });
-    })
+    });
+    this.passengers = this.passengers.filter((person) => {
+      return person.destinationFloor !== this.floor;
+    });
   }
+
   floorUp() { 
     if (this.floor < this.MAXFLOOR) {
       this.floor += 1;
