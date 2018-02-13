@@ -7,26 +7,20 @@ class Elevator {
     this.passengers = [];
     this.direction  = '';
     this.intervalId;
-    this.storedArray = [];
   }
 
   start() { 
-    this.intervalId = setInterval(() => { this.update(); }, 1000);
+    this.intervalId = setInterval(() => { this.update() }, 1000);
   }
+
   stop() { 
     clearInterval(this.intervalId);
   }
+
   update() {
     if (this.requests.length === 0) {
-      if (this.waitingList.length === 0) {
         console.log("No one is waiting!");
-        this.stop();
-        while (this.floor > 0) {
-          this.floorDown();
-          }
-        } else {
-          this.requests.push(this.waitingList[0].originFloor);
-      }
+        return;
     } else {
       if (this.requests[0] < this.floor) {
         this.floorDown();
@@ -37,32 +31,31 @@ class Elevator {
       } else {
         console.log("There's an issue in update!");
       }
+      this.log();
     }
-    this.log();
   }
+
   _passengersEnter() {
     this.waitingList.forEach((person, i) => {
       if (person.originFloor === this.floor) {
         this.passengers.push(person);
         this.requests.push(person.destinationFloor);
-        console.log(person.name + " has entered the elevator");
+        console.log(`${person.name} has entered the elevator on floor ${this.floor}`);
       }
     });
     this.waitingList = this.waitingList.filter((person) => {
       return person.originFloor !== this.floor;
     });
   }
+
   _passengersLeave() {
-    this.passengers.forEach((person, i) => {
+    this.passengers.forEach((person) => {
       if (person.destinationFloor === this.floor) {
-        this.storedArray.push(i);
-        console.log(person.name + " has left the elevator");
+        console.log(`${person.name} has exited the elevator on floor ${this.floor}`);
       }
-      this.requests.forEach((request, i) => {
-        if (request === this.floor) {
-          this.requests.splice(i, 1);
-        }
-      });
+    });
+    this.requests = this.requests.filter((request) => {
+      return request !== this.floor;
     });
     this.passengers = this.passengers.filter((person) => {
       return person.destinationFloor !== this.floor;
@@ -80,6 +73,7 @@ class Elevator {
       console.log("You're on the highest floor!");
     }
   }
+
   floorDown() { 
     if (this.floor > 0) {
       this.floor -= 1;
@@ -91,12 +85,14 @@ class Elevator {
       console.log("You're on the ground floor!"); 
     }
   }
+
   call(person) { 
     this.waitingList.push(person);
     this.requests.push(person.originFloor);
   }
+
   log() {
-    console.log("Direction: " + this.direction + " | Floor: " + this.floor);
+    console.log(`Direction: ${this.direction} | Floor: ${this.floor}`);
   }
 }
 

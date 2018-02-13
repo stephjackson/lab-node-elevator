@@ -3,11 +3,12 @@ const Person = require('./person.js');
 
 var elevator = new Elevator();
 var julia = new Person("Julia", 4, 7);
-elevator.call(julia);
 var robert = new Person("Robert", 10, 1);
-elevator.call(robert);
 var stephen = new Person("Stephen", 1, 7);
-elevator.call(stephen);
-var elon = new Person("Elon", 10, 0);
-elevator.call(elon);
+var elon = new Person("Elon", 9, 4);
 elevator.start();
+
+elevator.call(julia);
+setTimeout(() => elevator.call(elon), 10000);
+setTimeout(() => elevator.call(robert), 15000);
+setTimeout(() => elevator.call(stephen), 20000);
