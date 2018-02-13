@@ -36,7 +36,7 @@ class Elevator {
   }
 
   _passengersEnter() {
-    this.waitingList.forEach((person, i) => {
+    this.waitingList.forEach((person) => {
       if (person.originFloor === this.floor) {
         this.passengers.push(person);
         this.requests.push(person.destinationFloor);
